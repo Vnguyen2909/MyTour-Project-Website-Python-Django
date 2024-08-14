@@ -1,0 +1,51 @@
+{% extends "layout/base.html" %}
+{% block content %}
+<!-- Main -->
+<div class="container mx-auto h-screen">
+  <a href="/create_type_tour"
+    class="mt-10 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+    type="button">
+    CREATE
+  </a>
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">
+            ID
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Type tour
+          </th>
+
+          <th scope="col" class="px-6 py-3">
+            settings
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {%for type in types%}
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+          <td class="px-6 py-4 ">
+            {{type.id}}
+          </td>
+          <td class="px-6 py-4 ">
+            {{type}}
+          </td>
+          <td class="px-6 py-4">
+
+            <a href="{% url 'natours:delete-type-tour' type.id %}" type="button"
+              class="cursor-pointer focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 mt-2">DELETE</a>
+          </td>
+        </tr>
+
+        {%endfor%}
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- Main -->
+</div>
+{% endblock %}

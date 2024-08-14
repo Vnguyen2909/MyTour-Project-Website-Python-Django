@@ -1,0 +1,117 @@
+{% extends "layout/base.html" %}
+{% load static%}
+{% block content %}
+<!-- Main -->
+<div class="container mx-auto pb-20">
+    {% if user.is_superuser == 1 %}
+    <a href="/create_tour" type="button"
+        class="mt-10 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">CERATE
+        NEW TOUR</a>
+    {% endif%}
+
+    <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
+        class="mt-10 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        type="button">Type of Tours <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" fill="none" viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m1 1 4 4 4-4" />
+        </svg>
+    </button>
+
+    <!-- Dropdown menu -->
+    <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+            <li>
+                <a href="{% url 'natours:index' %}"
+                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">All</a>
+            </li>
+            {% for type in types%}
+            <li>
+                <a href="{% url 'natours:type-tour' type.id %}"
+                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{type}}</a>
+            </li>
+            {% endfor%}
+        </ul>
+    </div>
+
+    <div class="mt-10 grid grid-cols-3 gap-3">
+        {% for tour in tours %}
+        <div
+            class="max-w-full mb-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <div class="h-80">
+                {% if tour.imageCover %}
+                <img class="h-full w-full object-cover rounded-t-lg" src="{{tour.imageCover.url}}" alt="" />
+                {%else%}
+                <img class="h-full w-full object-cover rounded-t-lg" src="{% static 'img/no-img.jpg'%}" alt="" />
+                {%endif%}
+            </div>
+            <div class="p-5 grid gap-x-2 gap-y-2">
+                <div class="align-left">
+                    <h5 class="text-2xl font-bold tracking-tight text-gray-600 dark:text-white uppercase">{{tour.name}}
+                    </h5>
+                    <p class="py-2 text-sm font-medium uppercase text-gray-400">{{tour.difficulty}}
+                        {{tour.duration}}-DAY
+                        TOURS
+                    </p>
+                    <p class="font-normal text-gray-600 dark:text-gray-400">{{tour.summary}}</p>
+
+                </div>
+                <div class="py-3">
+
+                    <div class="flex ">
+                        <div class="inline-flex items-center basis-2/4">
+                            <i class="fa-solid fa-location-dot"
+                                style="color: rgb(20 184 166);width:22px;line-height: 28px;"></i>
+                            <span class="ml-1 text-sm text-gray-500">{{tour.start_location}}</span>
+                        </div>
+                        <div class="inline-flex items-center">
+                            <i class="fa-solid fa-user-group"
+                                style="color: rgb(20 184 166);width:22px;line-height: 28px;"></i>
+                            <span class="ml-1 text-sm text-gray-500">{{tour.maxGroupSize}} Peoples</span>
+                        </div>
+                    </div>
+                    <div class="flex ">
+                        <div class="inline-flex items-center basis-2/4">
+                            <i class="fa-solid fa-dollar-sign"
+                                style="color: rgb(20 184 166);width:22px;line-height: 28px;"></i>
+                            <span class="ml-1 text-sm text-gray-500">{{tour.price}}</span>
+                        </div>
+                        <div class="inline-flex items-center">
+                            <i class="fa-solid fa-arrow-up-right-dots"
+                                style="color: rgb(20 184 166);width:22px;line-height: 28px;"></i>
+                            <span class="ml-1 text-sm text-gray-500">{{tour.difficulty}}</span>
+                        </div>
+                    </div>
+                </div>
+                {% if user.is_superuser == 1 %}
+                <div class="flex items-center">
+                    <a href="{% url 'natours:detail-tour' tour.id %}"
+                        class="mr-2 inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        DETAIL
+
+                    </a>
+                    <a href="{% url 'natours:update-tour' tour.id %}"
+                        class="mr-2 focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-yellow-900">
+                        UPDATE
+
+                    </a>
+                    <a href="{% url 'natours:delete-tour' tour.id %}" type="button"
+                        class="cursor-pointer focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">DELETE</a>
+                </div>
+                {%else%}
+                <div class="inline-block">
+                    <a href="{% url 'natours:detail-tour' tour.id %}"
+                        class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        DETAIL
+
+                    </a>
+                </div>
+                {%endif%}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "layout/base.html" %}
+{% block content %}
+<!-- Main -->
+<div class="container mx-auto h-screen">
+
+  <form action="{% url 'natours:place-order' %}" method="POST">
+    {%csrf_token%}
+    {% load humanize %}
+    <div class="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
+      <div class="px-4 pt-8">
+        <p class="text-xl font-medium">Order Summary</p>
+        <p class="text-gray-400">Check your items. And select a suitable shipping method.</p>
+        {% if carts %}
+        <div class="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
+          {%for item in carts %}
+          <div class="flex flex-col rounded-lg bg-white sm:flex-row">
+            <img class="m-2 h-24 w-28 rounded-md border object-cover object-center" src="{{item.tour.imageCover.url}}"
+              alt="" />
+            <div class="flex w-full flex-col px-4 py-4">
+              <span class="font-semibold">{{item.tour.name}}</span>
+              <span class="float-right text-gray-400">{{item.tour.start_location}}</span>
+              <p class="text-lg font-bold">${{item.tour.price|intcomma}}</p>
+            </div>
+          </div>
+          {%endfor%}
+
+        </div>
+        {%else%}
+        <div id="toast-danger "
+          class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+          role="alert">
+          <div
+            class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
+            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+            </svg>
+            <span class="sr-only">Error icon</span>
+          </div>
+          <div class="ms-3 text-sm font-normal">No tour to check out!.</div>
+          <button type="button"
+            class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+            data-dismiss-target="#toast-danger" aria-label="Close">
+            <span class="sr-only">Close</span>
+            <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+          </button>
+        </div>
+        {%endif%}
+      </div>
+      <div class="mt-10 bg-gray-50 px-4 pt-8 lg:mt-0">
+        <p class="text-xl font-medium">Payment Details</p>
+        <p class="text-gray-400">Complete your order by providing your payment details.</p>
+        <div class="">
+          <label for="email" class="mt-4 mb-2 block text-sm font-medium">Email</label>
+          <div class="relative">
+            <input type="text" id="email" name="email" value="{{request.user.email}}"
+              class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+              placeholder="your.email@gmail.com" />
+            <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+              <i class="fa-solid fa-at text-gray-400"></i>
+            </div>
+          </div>
+          <label for="card-holder" class="mt-4 mb-2 block text-sm font-medium">Phone</label>
+          <div class="relative">
+            <input type="text" required id="card-holder" name="phone" value="{{user_pro.phone}}"
+              class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Your phone here" />
+            <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+              <i class="fa-solid fa-phone text-gray-400"></i>
+            </div>
+          </div>
+          <label for="card-holder" class="mt-4 mb-2 block text-sm font-medium">City</label>
+          <div class="relative">
+            <input type="text" required id="card-holder" name="city" value="{{user_pro.city}}"
+              class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Your city here" />
+            <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+              <i class="fa-solid fa-city text-gray-400"></i>
+            </div>
+          </div>
+
+
+          <!-- Total -->
+          <div class="mt-6 flex items-center justify-between">
+            <p class="text-sm font-medium text-gray-900">Total</p>
+            {%if total_price_cart%}
+            <p class="text-2xl font-semibold text-gray-900">${{total_price_cart|intcomma}}</p>
+            {%else%}
+            <p class="text-2xl font-semibold text-gray-900">$ 0</p>
+            {%endif%}
+
+          </div>
+        </div>
+        <button type="submit" class="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place
+          Order</button>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+{% endblock %}
